@@ -9,6 +9,8 @@ import com.riwi.library.domain.entities.User;
 import com.riwi.library.domain.repositories.UserRepository;
 import com.riwi.library.infrastructure.abstract_services.IUserService;
 import com.riwi.library.infrastructure.helpers.mappers.UserMapper;
+import com.riwi.library.util.exceptions.BadRequestException;
+import com.riwi.library.util.messages.ErrorMessage;
 
 import lombok.AllArgsConstructor;
 
@@ -30,20 +32,29 @@ public class UserService implements IUserService {
 
   @Override
   public UserResponse get(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'get'");
+    User user = this.userRepository.findById(id)
+    .orElseThrow(() -> new BadRequestException(ErrorMessage.idNotFound("user")));
+    return this.userMapper.toUserResponse(user);
   }
 
   @Override
   public UserResponse update(UserRequest request, Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'update'");
+    this.userRepository.findById(id)
+    .orElseThrow(() -> new BadRequestException(ErrorMessage.idNotFound("user")));
+
+    User user = this.userMapper.toUserEntity(request);
+    user.setId(id);
+
+    return this.userMapper.toUserResponse(this.userRepository.save(user));
+
   }
 
   @Override
   public void delete(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    User user = this.userRepository.findById(id)
+    .orElseThrow(() -> new BadRequestException(ErrorMessage.idNotFound("user")));
+
+    this.userRepository.delete(user);
   }
 
 }

@@ -27,7 +27,7 @@ public class UserRequest {
   @Schema(description = "Password", example = "password123")
   private String password;
 
-  @NotBlank(message = "Emailah is required")
+  @NotBlank(message = "Email is required")
   @Email(message = "email is invalid")
   @Size(max=100)
   @Schema(description = "Email")
@@ -37,5 +37,5 @@ public class UserRequest {
   private String fullName;
 
   @NotBlank(message = "Role is required")
-  private Role role;
+  private String role;
 }
