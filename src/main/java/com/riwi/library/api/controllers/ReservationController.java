@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.riwi.library.api.dto.error.ErrorResponse;
-import com.riwi.library.api.dto.request.UserReqToUpdate;
-import com.riwi.library.api.dto.request.UserRequest;
-import com.riwi.library.api.dto.response.UserRespDetails;
-import com.riwi.library.api.dto.response.UserRespWithLoans;
-import com.riwi.library.api.dto.response.UserRespWithReservations;
-import com.riwi.library.api.dto.response.responseBasic.UserResponse;
-import com.riwi.library.infrastructure.abstract_services.IUserService;
+import com.riwi.library.api.dto.request.ReservationReqToUpdate;
+import com.riwi.library.api.dto.request.ReservationRequest;
+import com.riwi.library.api.dto.response.ReservationRespDetails;
+import com.riwi.library.api.dto.response.responseBasic.ReservationResponse;
+import com.riwi.library.infrastructure.abstract_services.IReservationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,60 +27,49 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(path = "/users")
-public class UserController implements GenericController <UserRequest,UserReqToUpdate, UserResponse,UserRespDetails, Long> {
+@RequestMapping(path = "/reservations")
+public class ReservationController implements GenericController <ReservationRequest, ReservationReqToUpdate, ReservationResponse,ReservationRespDetails, Long> {
 
   @Autowired
-  IUserService userService;
+  IReservationService reservationService;
 
-  @Operation(summary = "Create user")
+  @Operation(summary = "Create reservation")
   @ApiResponse(responseCode = "400", description = "When the request is not valid", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @PostMapping
-  public ResponseEntity<UserResponse> create(@Validated @RequestBody UserRequest request) {
-    return ResponseEntity.ok(this.userService.create(request));
+  public ResponseEntity<ReservationResponse> create(@Validated @RequestBody ReservationRequest request) {
+    return ResponseEntity.ok(this.reservationService.create(request));
   }
 
-  @Operation(summary = "Get user by ID number")
+  @Operation(summary = "Get reservation by ID number")
   @ApiResponse(responseCode = "400", description = "When the ID is not found", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @GetMapping(path = "/{id}")
-  public ResponseEntity<UserRespDetails> get(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.get(id));
+  public ResponseEntity<ReservationRespDetails> get(@PathVariable Long id) {
+    return ResponseEntity.ok(this.reservationService.get(id));
   }
 
-  @Operation(summary = "Update an user by its ID number")
+  @Operation(summary = "Update an reservation by its ID number")
   @ApiResponse(responseCode = "400", description = "When the request is not valid", content = {
           @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
   })
   @PutMapping(path = "/{id}")
-  public ResponseEntity<UserResponse> update(@Validated @RequestBody UserReqToUpdate request, @PathVariable("id") Long id) {
-    return ResponseEntity.ok(this.userService.update(request, id));
+  public ResponseEntity<ReservationResponse> update(@Validated @RequestBody ReservationReqToUpdate request, @PathVariable("id") Long id) {
+    return ResponseEntity.ok(this.reservationService.update(request, id));
   }
 
-  @Operation(summary = "Delete an user by its ID number")
-  @ApiResponse(responseCode = "204", description = "User deleted successfully")
+  @Operation(summary = "Delete an reservation by its ID number")
+  @ApiResponse(responseCode = "204", description = "Reservation deleted successfully")
   @ApiResponse(responseCode = "400", description = "When the ID is not found", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @DeleteMapping(path = "/{id}" )
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    this.userService.delete(id);
+    this.reservationService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
-  @Operation(summary = "Get user and his loans by ID ")
-  @GetMapping(path = "/{id}/loans")
-  public ResponseEntity<UserRespWithLoans> getAllLoans(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.getUserWithLoans(id));
-  }
-
-  @Operation(summary = "Get user and his reservations by ID ")
-  @GetMapping(path = "/{id}/reservations")
-  public ResponseEntity<UserRespWithReservations> getAllReservations(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.getUserWithReservations(id));
-  }
 
 }

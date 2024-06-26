@@ -1,5 +1,7 @@
 package com.riwi.library.api.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,16 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.riwi.library.api.dto.error.ErrorResponse;
-import com.riwi.library.api.dto.request.UserReqToUpdate;
-import com.riwi.library.api.dto.request.UserRequest;
-import com.riwi.library.api.dto.response.UserRespDetails;
-import com.riwi.library.api.dto.response.UserRespWithLoans;
-import com.riwi.library.api.dto.response.UserRespWithReservations;
-import com.riwi.library.api.dto.response.responseBasic.UserResponse;
-import com.riwi.library.infrastructure.abstract_services.IUserService;
+import com.riwi.library.api.dto.request.BookRequest;
+import com.riwi.library.api.dto.response.BookResponseDetails;
+import com.riwi.library.api.dto.response.BookResponseWithReservations;
+import com.riwi.library.api.dto.response.responseBasic.BookResponse;
+import com.riwi.library.infrastructure.abstract_services.IBookService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,60 +30,62 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(path = "/users")
-public class UserController implements GenericController <UserRequest,UserReqToUpdate, UserResponse,UserRespDetails, Long> {
+@RequestMapping(path = "/books")
+public class BookController implements GenericController <BookRequest,BookRequest, BookResponse,BookResponseDetails, Long> {
 
   @Autowired
-  IUserService userService;
+  IBookService bookService;
 
-  @Operation(summary = "Create user")
+  @Operation(summary = "Create book")
   @ApiResponse(responseCode = "400", description = "When the request is not valid", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @PostMapping
-  public ResponseEntity<UserResponse> create(@Validated @RequestBody UserRequest request) {
-    return ResponseEntity.ok(this.userService.create(request));
+  public ResponseEntity<BookResponse> create(@Validated @RequestBody BookRequest request) {
+    return ResponseEntity.ok(this.bookService.create(request));
   }
 
-  @Operation(summary = "Get user by ID number")
+  @Operation(summary = "Get book by ID number")
   @ApiResponse(responseCode = "400", description = "When the ID is not found", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @GetMapping(path = "/{id}")
-  public ResponseEntity<UserRespDetails> get(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.get(id));
+  public ResponseEntity<BookResponseDetails> get(@PathVariable Long id) {
+    return ResponseEntity.ok(this.bookService.get(id));
   }
 
-  @Operation(summary = "Update an user by its ID number")
+  @Operation(summary = "Update an book by its ID number")
   @ApiResponse(responseCode = "400", description = "When the request is not valid", content = {
           @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
   })
   @PutMapping(path = "/{id}")
-  public ResponseEntity<UserResponse> update(@Validated @RequestBody UserReqToUpdate request, @PathVariable("id") Long id) {
-    return ResponseEntity.ok(this.userService.update(request, id));
+  public ResponseEntity<BookResponse> update(@Validated @RequestBody BookRequest request, @PathVariable("id") Long id) {
+    return ResponseEntity.ok(this.bookService.update(request, id));
   }
 
-  @Operation(summary = "Delete an user by its ID number")
-  @ApiResponse(responseCode = "204", description = "User deleted successfully")
+  @Operation(summary = "Delete an book by its ID number")
+  @ApiResponse(responseCode = "204", description = "Book deleted successfully")
   @ApiResponse(responseCode = "400", description = "When the ID is not found", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
   @DeleteMapping(path = "/{id}" )
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    this.userService.delete(id);
+    this.bookService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
-  @Operation(summary = "Get user and his loans by ID ")
-  @GetMapping(path = "/{id}/loans")
-  public ResponseEntity<UserRespWithLoans> getAllLoans(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.getUserWithLoans(id));
+  @Operation(summary = "Filter books by title, author or genre")
+  @GetMapping(path = "/{id}")
+  public ResponseEntity<List<BookResponse>> filter(@RequestParam(defaultValue = "",required = false) String title,
+  @RequestParam(defaultValue = "",required = false) String author,
+  @RequestParam(defaultValue = "",required = false) String genre) {
+    return ResponseEntity.ok(this.bookService.getAllBooks(title, author, genre));
   }
 
-  @Operation(summary = "Get user and his reservations by ID ")
+  @Operation(summary = "Get book with reservations by ID number")
   @GetMapping(path = "/{id}/reservations")
-  public ResponseEntity<UserRespWithReservations> getAllReservations(@PathVariable Long id) {
-    return ResponseEntity.ok(this.userService.getUserWithReservations(id));
+  public ResponseEntity<BookResponseWithReservations> getAllReservations(@PathVariable Long id) {
+    return ResponseEntity.ok(this.bookService.getBookWithReservations(id));
   }
 
 }

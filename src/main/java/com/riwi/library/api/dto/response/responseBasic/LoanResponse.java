@@ -1,0 +1,23 @@
+package com.riwi.library.api.dto.response.responseBasic;
+
+import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+@Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoanResponse {
+
+  private Long id;
+  
+  private LocalDate loanDate;
+  
+  private LocalDate returnDate;
+
+  private Boolean status;
+}

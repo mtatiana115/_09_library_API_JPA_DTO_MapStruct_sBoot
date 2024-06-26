@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest {
+public class UserReqToUpdate {
+
+  //SIN ROL
 
   @NotBlank(message = "Username is required")
   @Size(min = 1, max = 50)
@@ -28,15 +30,9 @@ public class UserRequest {
   @NotBlank(message = "Email is required")
   @Email(message = "email is invalid")
   @Size(max=100)
-  @Schema(description = "Email", example = "your_email@email.com")
+  @Schema(description = "Email")
   private String email;
 
   @NotBlank(message = "Fullname is required")
-  @Schema(description = "fullname", example = "name_lastname")
   private String fullName;
-
-
-  @NotBlank(message = "Role is required")
-  @Schema(description = "role", example = "LIBRARIAN or STUDENT")
-  private String role;
 }

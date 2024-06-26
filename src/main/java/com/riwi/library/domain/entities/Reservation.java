@@ -34,7 +34,7 @@ public class Reservation {
   private LocalDate reservationDate;
 
   @Column(length = 20, nullable = false)
-  private boolean status;
+  private Boolean status;
 
   //Relaciones
     @ManyToOne(fetch = FetchType.LAZY)

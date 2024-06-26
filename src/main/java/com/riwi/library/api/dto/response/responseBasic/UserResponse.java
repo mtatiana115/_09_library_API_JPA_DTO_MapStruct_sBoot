@@ -1,4 +1,4 @@
-package com.riwi.library.api.dto.response;
+package com.riwi.library.api.dto.response.responseBasic;
 
 import com.riwi.library.util.enums.Role;
 
